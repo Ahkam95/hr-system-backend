@@ -2,7 +2,7 @@ service: hr-system-backend
 
 provider:
   name: aws
-  runtime: nodejs16.x
+  runtime: nodejs18.x
   stage: dev
   region: ap-south-1
 
