@@ -177,7 +177,7 @@ app.get('/logout', (req, res) => {
 })
 
 app.post('/create', upload.single('image'), (req, res) => {
-  console.log('req.body')
+  console.log(req.body)
     const sql = "INSERT INTO employee (`name`,`email`,`password`, `address`, `salary`,`image`) VALUES (?)";
     bcrypt.hash(req.body.password.toString(), 10, (err, hash) => {
         if(err) return res.json({Error: "Error in hashing password"});
@@ -190,7 +190,10 @@ app.post('/create', upload.single('image'), (req, res) => {
             req.file.filename
         ]
         con.query(sql, [values], (err, result) => {
-            if(err) return res.json({Error: "Inside singup query"});
+            if(err) {
+                console.log(err)
+                return res.json({Error: "Inside singup query"});
+            }
             return res.json({Status: "Success"});
         })
     } )
