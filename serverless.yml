@@ -53,9 +53,6 @@ resources:
         Port: 80
         Protocol: HTTP
         TargetType: lambda
-        Targets:
-          - Id: !GetAtt UserManagementAPI.Arn
-            Port: 80
 
     LoadBalancerListener:
       Type: AWS::ElasticLoadBalancingV2::Listener
