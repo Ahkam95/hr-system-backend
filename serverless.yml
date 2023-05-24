@@ -24,14 +24,14 @@ resources:
     LoadBalancerListener:
       Type: AWS::ElasticLoadBalancingV2::Listener
       Properties:
-        LoadBalancerArn: !Ref LoadBalancer
-        Protocol: HTTP
-        Port: 80
         DefaultActions:
           - Type: fixed-response
             FixedResponseConfigs:
               StatusCode: '404'
               ContentType: 'application/json'
+        LoadBalancerArn: !Ref LoadBalancer
+        Port: 80
+        Protocol: HTTP
 
 provider:
   name: aws
