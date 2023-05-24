@@ -25,13 +25,22 @@ resources:
       Type: AWS::ElasticLoadBalancingV2::Listener
       Properties:
         DefaultActions:
-          - Type: fixed-response
-            FixedResponseConfigs:
-              StatusCode: '404'
-              ContentType: 'application/json'
+          - Type: forward
+            TargetGroupArn: !Ref LBTargetGroup
         LoadBalancerArn: !Ref LoadBalancer
         Port: 80
         Protocol: HTTP
+
+    LBTargetGroup:
+      Type: AWS::ElasticLoadBalancingV2::TargetGroup
+      Properties:
+        Name: LBTargetGroup
+        Port: 80
+        Protocol: HTTP
+        TargetType: lambda
+        Targets:
+          - Id: !GetAtt UserManagementAPI.Arn
+            Port: 80
 
 provider:
   name: aws
