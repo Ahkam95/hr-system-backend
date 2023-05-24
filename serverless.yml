@@ -1,4 +1,7 @@
 service: hrms-system-backend
+  
+plugins:
+  - serverless-helpers
 
 provider:
   name: aws
@@ -39,22 +42,12 @@ resources:
       Properties:
         Type: application
         Name: msc-app-lb
-        Scheme: internal
+        Scheme: internet-facing
         Subnets:
           - subnet-08a8f9f0b16b9d40e
           - subnet-0107e88ae4d4afe85
         SecurityGroups:
           - !Ref LambdaSecurityGroup
-
-    LoadBalancerListener:
-      Type: AWS::ElasticLoadBalancingV2::Listener
-      Properties:
-        DefaultActions:
-          - Type: forward
-            TargetGroupArn: !Ref LBTargetGroup
-        LoadBalancerArn: !Ref LoadBalancer
-        Port: 80
-        Protocol: HTTP
 
     LBTargetGroup:
       Type: AWS::ElasticLoadBalancingV2::TargetGroup
@@ -67,3 +60,12 @@ resources:
           - Id: !GetAtt UserManagementAPI.Arn
             Port: 80
             
+    LoadBalancerListener:
+      Type: AWS::ElasticLoadBalancingV2::Listener
+      Properties:
+        DefaultActions:
+          - Type: forward
+            TargetGroupArn: !Ref LBTargetGroup
+        LoadBalancerArn: !Ref LoadBalancer
+        Port: 80
+        Protocol: HTTP
