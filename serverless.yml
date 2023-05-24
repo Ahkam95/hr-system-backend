@@ -3,7 +3,7 @@ service: hr-system-backend
 resources:
   Resources:
     LambdaSecurityGroup:
-      Tpe: 'AWS::EC2::SecurityGroup'
+      Type: 'AWS::EC2::SecurityGroup'
       Properties:
         GroupName: lambda-sg
         GroupDescription: 'Default Lambda'
