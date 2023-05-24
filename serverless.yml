@@ -1,36 +1,37 @@
 service: hr-system-backend
 
 resources:
-  LambdaSecurityGroup:
-    Tpe: 'AWS::EC2::SecurityGroup'
-    Properties:
-      GroupName: lambda-sg
-      GroupDescription: 'Default Lambda'
-      VpcId: vpc-0f0a3d36c7158869c
+  Resources:
+    LambdaSecurityGroup:
+      Tpe: 'AWS::EC2::SecurityGroup'
+      Properties:
+        GroupName: lambda-sg
+        GroupDescription: 'Default Lambda'
+        VpcId: vpc-0f0a3d36c7158869c
 
-  LoadBalancer:
-    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
-    Properties:
-      Type: application
-      Name: msc-app-lb
-      Scheme: internal
-      Subnets:
-        - subnet-08a8f9f0b16b9d40e
-        - subnet-0107e88ae4d4afe85
-      SecurityGroups:
-        - !Ref LambdaSecurityGroup
+    LoadBalancer:
+      Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+      Properties:
+        Type: application
+        Name: msc-app-lb
+        Scheme: internal
+        Subnets:
+          - subnet-08a8f9f0b16b9d40e
+          - subnet-0107e88ae4d4afe85
+        SecurityGroups:
+          - !Ref LambdaSecurityGroup
 
-  LoadBalancerListener:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    Properties:
-      LoadBalancerArn: !Ref LoadBalancer
-      Protocol: HTTP
-      Port: 80
-      DefaultActions:
-        - Type: fixed-response
-          FixedResponseConfigs:
-            StatusCode: '404'
-            ContentType: 'application/json'
+    LoadBalancerListener:
+      Type: AWS::ElasticLoadBalancingV2::Listener
+      Properties:
+        LoadBalancerArn: !Ref LoadBalancer
+        Protocol: HTTP
+        Port: 80
+        DefaultActions:
+          - Type: fixed-response
+            FixedResponseConfigs:
+              StatusCode: '404'
+              ContentType: 'application/json'
 
 provider:
   name: aws
