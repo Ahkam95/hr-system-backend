@@ -1,3 +1,4 @@
+import serverless from 'serverless-http'
 import express from 'express'
 import mysql from 'mysql'
 import cors from 'cors'
@@ -10,7 +11,7 @@ import path from 'path'
 const app = express();
 app.use(cors(
     {
-        origin: ["http://localhost:3000"],
+        origin: ["http://localhost:3000", "http://hrms-test1.s3-website.ap-south-1.amazonaws.com"],
         methods: ["POST", "GET", "PUT"],
         credentials: true
     }
@@ -199,6 +200,9 @@ app.post('/create', upload.single('image'), (req, res) => {
     } )
 })
 
-app.listen(8081, ()=> {
-    console.log("Running");
-})
+// // to run locally
+// app.listen(8081, ()=> {
+//     console.log("Running");
+// })
+
+export const handler = serverless(app);
