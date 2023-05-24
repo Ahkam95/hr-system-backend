@@ -7,6 +7,9 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import multer from 'multer'
 import path from 'path'
+import LogUtil from './logUtil'
+
+const logger = LogUtil.getLogger();
 
 const app = express();
 app.use(cors(
@@ -44,15 +47,15 @@ const upload = multer({
 
 con.connect(function(err) {
     if(err) {
-      console.log(err)
-        console.log("Error in Connection");
+        logger.error('Failed to connect to DB')
+        logger.error(err)
     } else {
-        console.log("Connected");
+        logger.info('Connected to DB')
     }
 })
 
 app.get('/getEmployee', (req, res) => {
-    console.log('came here')
+    logger.info('Calling /getEmployee endpoint')
     const sql = "SELECT * FROM employee";
     con.query(sql, (err, result) => {
         if(err) return res.json({Error: "Get employee error in sql"});
@@ -61,6 +64,7 @@ app.get('/getEmployee', (req, res) => {
 })
 
 app.get('/get/:id', (req, res) => {
+    logger.info('Calling /get/:id endpoint')
     const id = req.params.id;
     const sql = "SELECT * FROM employee where id = ?";
     con.query(sql, [id], (err, result) => {
@@ -70,6 +74,7 @@ app.get('/get/:id', (req, res) => {
 })
 
 app.put('/update/:id', (req, res) => {
+    logger.info('Calling /update/:id endpoint')
     const id = req.params.id;
     const sql = "UPDATE employee set salary = ? WHERE id = ?";
     con.query(sql, [req.body.salary, id], (err, result) => {
@@ -79,6 +84,7 @@ app.put('/update/:id', (req, res) => {
 })
 
 app.delete('/delete/:id', (req, res) => {
+    logger.info('Calling /delete/:id endpoint')
     const id = req.params.id;
     const sql = "Delete FROM employee WHERE id = ?";
     con.query(sql, [id], (err, result) => {
@@ -88,6 +94,7 @@ app.delete('/delete/:id', (req, res) => {
 })
 
 const verifyUser = (req, res, next) => {
+    logger.info('Verifying user')
     const token = req.cookies.token;
     if(!token) {
         return res.json({Error: "You are no Authenticated"});
@@ -102,10 +109,12 @@ const verifyUser = (req, res, next) => {
 }
 
 app.get('/dashboard',verifyUser, (req, res) => {
+    logger.info('Calling /dashboard endpoint')
     return res.json({Status: "Success", role: req.role, id: req.id})
 })
 
 app.get('/adminCount', (req, res) => {
+    logger.info('Calling /adminCount endpoint')
     const sql = "Select count(id) as admin from users";
     con.query(sql, (err, result) => {
         if(err) return res.json({Error: "Error in runnig query"});
@@ -113,6 +122,7 @@ app.get('/adminCount', (req, res) => {
     })
 })
 app.get('/employeeCount', (req, res) => {
+    logger.info('Calling /employeeCount endpoint')
     const sql = "Select count(id) as employee from employee";
     con.query(sql, (err, result) => {
         if(err) return res.json({Error: "Error in runnig query"});
@@ -121,6 +131,7 @@ app.get('/employeeCount', (req, res) => {
 })
 
 app.get('/salary', (req, res) => {
+    logger.info('Calling /salary endpoint')
     const sql = "Select sum(salary) as sumOfSalary from employee";
     con.query(sql, (err, result) => {
         if(err) return res.json({Error: "Error in runnig query"});
@@ -129,6 +140,7 @@ app.get('/salary', (req, res) => {
 })
 
 app.post('/login', (req, res) => {
+    logger.info('Calling /login endpoint')
     const sql = "SELECT * FROM users Where email = ? AND  password = ?";
     con.query(sql, [req.body.email, req.body.password], (err, result) => {
         if(err) return res.json({Status: "Error", Error: "Error in runnig query"});
@@ -144,6 +156,7 @@ app.post('/login', (req, res) => {
 })
 
 app.post('/employeelogin', (req, res) => {
+    logger.info('Calling /employeelogin endpoint')
     const sql = "SELECT * FROM employee Where email = ?";
     con.query(sql, [req.body.email], (err, result) => {
         if(err) return res.json({Status: "Error", Error: "Error in runnig query"});
@@ -181,7 +194,7 @@ app.get('/logout', (req, res) => {
 })
 
 app.post('/create', upload.single('image'), (req, res) => {
-  console.log(req.body)
+    
     const sql = "INSERT INTO employee (`name`,`email`,`password`, `address`, `salary`,`image`) VALUES (?)";
     bcrypt.hash(req.body.password.toString(), 10, (err, hash) => {
         if(err) return res.json({Error: "Error in hashing password"});
@@ -195,7 +208,7 @@ app.post('/create', upload.single('image'), (req, res) => {
         ]
         con.query(sql, [values], (err, result) => {
             if(err) {
-                console.log(err)
+                logger.error(err)
                 return res.json({Error: "Inside singup query"});
             }
             return res.json({Status: "Success"});

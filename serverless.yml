@@ -10,7 +10,12 @@ functions:
   UserManagementAPI:
     handler: src/userManagementApi/app.handler
     timeout: 60 # seconds
-    memorySize: 128 # mb
+    memorySize: 256 # mb
+    environment:
+      DB_DOMAIN: localhost
+      DB_USER: root
+      DB_PASSWORD: 123
+      DATABASE: hrms
     events:
       - alb:
         listenerArn: !Ref LoadBalancerListener
