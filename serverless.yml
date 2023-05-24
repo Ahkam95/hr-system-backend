@@ -1,8 +1,5 @@
 service: hrms-system-backend
   
-plugins:
-  - serverless-helpers
-
 provider:
   name: aws
   runtime: nodejs18.x
@@ -59,7 +56,7 @@ resources:
         Targets:
           - Id: !GetAtt UserManagementAPI.Arn
             Port: 80
-            
+
     LoadBalancerListener:
       Type: AWS::ElasticLoadBalancingV2::Listener
       Properties:
