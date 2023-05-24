@@ -51,7 +51,6 @@ resources:
       Properties:
         Name: LBTargetGroup
         Port: 80
-        Protocol: HTTP
         TargetType: lambda
 
     LoadBalancerListener:
