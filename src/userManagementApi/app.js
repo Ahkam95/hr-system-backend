@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(express.static('public'));
 
 const con = mysql.createConnection({
-    host: "localhost",
+    host: "msc.c97amsmiybyg.ap-south-1.rds.amazonaws.com",
     user: "root",
     password: "Ahkam123",
     database: "hrms"
