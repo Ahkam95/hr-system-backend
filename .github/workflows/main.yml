@@ -3,7 +3,7 @@ name: Deploy Lambda Function
 on:
   push:
     branches:
-      - develop
+      - main
 
 jobs:
   deploy:
@@ -23,4 +23,4 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          npx serverless deploy --stage develop --region ap-south-1
+          npx serverless deploy --stage dev --region ap-south-1
