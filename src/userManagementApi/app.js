@@ -3,7 +3,7 @@ import express from 'express'
 import mysql from 'mysql'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import multer from 'multer'
 import path from 'path'
@@ -20,11 +20,13 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.static('public'));
 
+const {DB_DOMAIN, DB_USER, DB_PASSWORD, DATABASE} = process.env
+
 const con = mysql.createConnection({
-    host: "msc.c97amsmiybyg.ap-south-1.rds.amazonaws.com",
-    user: "root",
-    password: "Ahkam123",
-    database: "hrms"
+    host: DB_DOMAIN,
+    user: DB_USER,
+    password: DB_PASSWORD,
+    database: DATABASE
 })
 
 const storage = multer.diskStorage({
@@ -50,6 +52,7 @@ con.connect(function(err) {
 })
 
 app.get('/getEmployee', (req, res) => {
+    console.log('came here')
     const sql = "SELECT * FROM employee";
     con.query(sql, (err, result) => {
         if(err) return res.json({Error: "Get employee error in sql"});
