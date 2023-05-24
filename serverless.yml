@@ -1,5 +1,37 @@
 service: hr-system-backend
 
+resources:
+  LambdaSecurityGroup:
+    Tpe: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupName: lambda-sg
+      GroupDescription: 'Default Lambda'
+      VpcId: vpc-0f0a3d36c7158869c
+
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Type: application
+      Name: msc-app-lb
+      Scheme: internal
+      Subnets:
+        - subnet-08a8f9f0b16b9d40e
+        - subnet-0107e88ae4d4afe85
+      SecurityGroups:
+        - !Ref LambdaSecurityGroup
+
+  LoadBalancerListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref LoadBalancer
+      Protocol: HTTP
+      Port: 80
+      DefaultActions:
+        - Type: fixed-response
+          FixedResponseConfigs:
+            StatusCode: '404'
+            ContentType: 'application/json'
+
 provider:
   name: aws
   runtime: nodejs18.x
@@ -7,11 +39,20 @@ provider:
   region: ap-south-1
 
 functions:
-  user-management-api:
+  UserManagementAPI:
     handler: src/userManagementApi/app.handler
     timeout: 60 # seconds
     memorySize: 128 # mb
     events:
-      - http: ANY /{proxy+}
-      - http: ANY /
-       
+      - alb:
+        listenerArn: !Ref LoadBalancerListener
+        priority: 1
+        condition:
+          path:
+            - /*
+    vpc:
+      securityGroupIds:
+        - !Ref LambdaSecurityGroup
+      subnetIds:
+        - subnet-08a8f9f0b16b9d40e
+        - subnet-0107e88ae4d4afe85
