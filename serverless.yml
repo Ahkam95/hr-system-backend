@@ -5,7 +5,7 @@ resources:
     LambdaSecurityGroup:
       Type: 'AWS::EC2::SecurityGroup'
       Properties:
-        GroupName: lambda-sg
+        GroupName: hrms-lambda-sg
         GroupDescription: 'Default Lambda'
         VpcId: vpc-0f0a3d36c7158869c
 
