@@ -1,5 +1,30 @@
 service: hrms-system-backend
 
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: dev
+  region: ap-south-1
+
+functions:
+  UserManagementAPI:
+    handler: src/userManagementApi/app.handler
+    timeout: 60 # seconds
+    memorySize: 128 # mb
+    events:
+      - alb:
+        listenerArn: !Ref LoadBalancerListener
+        priority: 1
+        condition:
+          path:
+            - /*
+    vpc:
+      securityGroupIds:
+        - !Ref LambdaSecurityGroup
+      subnetIds:
+        - subnet-08a8f9f0b16b9d40e
+        - subnet-0107e88ae4d4afe85
+
 resources:
   Resources:
     LambdaSecurityGroup:
@@ -41,28 +66,4 @@ resources:
         Targets:
           - Id: !GetAtt UserManagementAPI.Arn
             Port: 80
-
-provider:
-  name: aws
-  runtime: nodejs18.x
-  stage: dev
-  region: ap-south-1
-
-functions:
-  UserManagementAPI:
-    handler: src/userManagementApi/app.handler
-    timeout: 60 # seconds
-    memorySize: 128 # mb
-    events:
-      - alb:
-        listenerArn: !Ref LoadBalancerListener
-        priority: 1
-        condition:
-          path:
-            - /*
-    vpc:
-      securityGroupIds:
-        - !Ref LambdaSecurityGroup
-      subnetIds:
-        - subnet-08a8f9f0b16b9d40e
-        - subnet-0107e88ae4d4afe85
+            
