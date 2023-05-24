@@ -50,7 +50,6 @@ resources:
       Type: AWS::ElasticLoadBalancingV2::TargetGroup
       Properties:
         Name: LBTargetGroup
-        Port: 80
         TargetType: lambda
 
     LoadBalancerListener:
