@@ -1,4 +1,4 @@
-service: hr-system-backend
+service: hrms-system-backend
 
 resources:
   Resources:
