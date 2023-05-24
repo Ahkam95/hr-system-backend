@@ -7,7 +7,7 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import multer from 'multer'
 import path from 'path'
-import LogUtil from './logUtil'
+import LogUtil from './logUtil.js'
 
 const logger = LogUtil.getLogger();
 
