@@ -15,7 +15,7 @@ const app = express();
 app.use(cors(
     {
         origin: ["http://localhost:3000", "http://hrms-test1.s3-website.ap-south-1.amazonaws.com"],
-        methods: ["POST", "GET", "PUT"],
+        methods: ["POST", "GET", "PUT", "DELETE"],
         credentials: true
     }
 ));
