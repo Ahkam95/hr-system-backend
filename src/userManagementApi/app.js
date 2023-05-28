@@ -5,8 +5,6 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import multer from 'multer'
-import path from 'path'
 import LogUtil from './logUtil.js'
 
 const logger = LogUtil.getLogger();
@@ -30,19 +28,6 @@ const con = mysql.createConnection({
     user: DB_USER,
     password: DB_PASSWORD,
     database: DATABASE
-})
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'public/images')
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname));
-    }
-})
-
-const upload = multer({
-    storage: storage
 })
 
 con.connect(function(err) {
@@ -226,9 +211,9 @@ app.get('/logout', (req, res) => {
     return res.json({Status: "Success"});
 })
 
-app.post('/create', upload.single('image'), (req, res) => {
+app.post('/create', (req, res) => {
     logger.info('Calling /create endpoint')
-    const sql = "INSERT INTO employee (`name`,`email`,`password`, `address`, `salary`,`image`) VALUES (?)";
+    const sql = "INSERT INTO employee (`name`,`email`,`password`, `address`, `salary`) VALUES (?)";
     bcrypt.hash(req.body.password.toString(), 10, (err, hash) => {
         if(err) {
             logger.error(err)
@@ -240,8 +225,7 @@ app.post('/create', upload.single('image'), (req, res) => {
             req.body.email,
             hash,
             req.body.address,
-            req.body.salary,
-            req.file.filename
+            req.body.salary
         ]
         con.query(sql, [values], (err, result) => {
             if(err) {
