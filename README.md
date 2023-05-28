@@ -18,6 +18,7 @@ export DB_DOMAIN="localhost"
 export DB_USER=<>
 export DB_PASSWORD=<>
 export DATABASE="hrms"
+export JWT_SECRET_KEY="jwt_secret"
 ```
 
 3. Start the execution

@@ -23,7 +23,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.static('public'));
 
-const {DB_DOMAIN, DB_USER, DB_PASSWORD, DATABASE} = process.env
+const {DB_DOMAIN, DB_USER, DB_PASSWORD, DATABASE, JWT_SECRET_KEY} = process.env
 
 const con = mysql.createConnection({
     host: DB_DOMAIN,
@@ -66,7 +66,25 @@ app.get('/getEmployee', (req, res) => {
     })
 })
 
-app.get('/get/:id', (req, res) => {
+const verifyUser = (req, res, next) => {
+    logger.info('Verifying user')
+    const token = req.headers.token;
+    if(!token) {
+        return res.json({Error: "You are not Authenticated"});
+    } else {
+        jwt.verify(token, JWT_SECRET_KEY, (err, decoded) => {
+            if(err) {
+                logger.error(err)
+                return res.json({Error: "Token wrong"});
+            }
+            req.role = decoded.role;
+            req.id = decoded.id;
+            next();
+        } )
+    }
+}
+
+app.get('/get/:id', verifyUser, (req, res) => {
     logger.info('Calling /get/:id endpoint')
     const id = req.params.id;
     const sql = "SELECT * FROM employee where id = ?";
@@ -105,32 +123,14 @@ app.delete('/delete/:id', (req, res) => {
     })
 })
 
-const verifyUser = (req, res, next) => {
-    logger.info('Verifying user')
-    const token = req.headers.token;
-    if(!token) {
-        return res.json({Error: "You are not Authenticated"});
-    } else {
-        jwt.verify(token, "jwt-secret-key", (err, decoded) => {
-            if(err) {
-                logger.error(err)
-                return res.json({Error: "Token wrong"});
-            }
-            req.role = decoded.role;
-            req.id = decoded.id;
-            next();
-        } )
-    }
-}
-
 app.get('/dashboard',verifyUser, (req, res) => {
     logger.info('Calling /dashboard endpoint')
     return res.json({Status: "Success", role: req.role, id: req.id})
 })
 
-app.get('/adminCount', (req, res) => {
-    logger.info('Calling /adminCount endpoint')
-    const sql = "Select count(id) as admin from users";
+app.get('/adminDetails', (req, res) => {
+    logger.info('Calling /adminDetails endpoint')
+    const sql = "Select email from users";
     con.query(sql, (err, result) => {
         if(err) {
             logger.error(err)
@@ -173,7 +173,7 @@ app.post('/login', (req, res) => {
         }
         if(result.length > 0) {
             const id = result[0].id;
-            const token = jwt.sign({role: "admin"}, "jwt-secret-key", {expiresIn: '1d'});
+            const token = jwt.sign({role: "admin"}, JWT_SECRET_KEY, {expiresIn: '1d'});
             res.cookie('token', token);
             return res.json({Status: "Success", token})
         } else {
@@ -196,9 +196,9 @@ app.post('/employeelogin', (req, res) => {
                     return res.json({Error: "password error"});
                 }
                 if(response) {
-                    const token = jwt.sign({role: "employee", id: result[0].id}, "jwt-secret-key", {expiresIn: '1d'});
+                    const token = jwt.sign({role: "employee", id: result[0].id}, JWT_SECRET_KEY, {expiresIn: '1d'});
                     res.cookie('token', token);
-                    return res.json({Status: "Success", id: result[0].id})
+                    return res.json({Status: "Success", id: result[0].id, token})
                 } else {
                     return res.json({Status: "Error", Error: "Wrong Email or Password"});
                 }
@@ -234,6 +234,7 @@ app.post('/create', upload.single('image'), (req, res) => {
             logger.error(err)
             return res.json({Error: "Error in hashing password"});
         }
+        console.log(req.file)
         const values = [
             req.body.name,
             req.body.email,

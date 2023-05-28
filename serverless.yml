@@ -16,6 +16,7 @@ functions:
       DB_USER: root
       DB_PASSWORD: 123
       DATABASE: hrms
+      JWT_SECRET_KEY: jwt-secret
     events:
       - alb:
         listenerArn: !Ref LoadBalancerListener
