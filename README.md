@@ -15,10 +15,10 @@ npm install
 2. Pass the environment variables
 ```bash
 export DB_DOMAIN="localhost"
-export DB_USER=<>
-export DB_PASSWORD=<>
 export DATABASE="hrms"
 export JWT_SECRET_KEY="jwt_secret"
+export DB_USER=<>
+export DB_PASSWORD=<>
 ```
 
 3. Start the execution

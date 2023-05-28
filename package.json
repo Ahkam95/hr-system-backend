@@ -27,6 +27,7 @@
     "log4js": "6.9.1",
     "mysql": "2.18.1",
     "nodemon": "2.0.22",
-    "serverless-http": "2.3.2"
+    "serverless-http": "2.3.2",
+    "serverless-mysql": "1.5.5"
   }
 }
