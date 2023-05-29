@@ -4,7 +4,7 @@ Cloud based Human Resource Management System
 ## Prerequisites
 1. Node 16
 2. serverless 3 (npm install -g serverless)
-3. MySql Workbench
+3. MySql Database (setup RDS MySQL database)
 
 ## To run locally
 1. Install dependancies
@@ -26,13 +26,13 @@ export DB_PASSWORD=<>
 npm start
 ```
 
-## To deploy the Client to AWS
+## To deploy the the Lambda to AWS
 
 1. Login to AWS via CLI
 ```bash
 aws configure
 ```
-pass the Security Credential of the AWS account
+pass the security Credential of the AWS account in your terminal
 
 2. Deploy
 ```bash
